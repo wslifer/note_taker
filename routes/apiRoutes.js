@@ -29,5 +29,28 @@ module.exports = function (app) {
       });
     });
   });
-  app.delete("/api/notes/:id", (req, res) => {});
+  app.delete("/api/notes/:id", (req, res) => {
+    fs.readFile("db/db.json", "utf8", (err, data) => {
+      if (err) throw err;
+      const noteArr = JSON.parse(data);
+
+      let delNote = req.params.id;
+
+      let updatedNotesArr = [];
+      for (let i = 0; i < noteArr.length; i++) {
+        if (noteArr[i].id != delNote) {
+          updatedNotesArr.push(noteArr[i]);
+        }
+      }
+      fs.writeFile(
+        "db/db.json",
+        JSON.stringify(updatedNotesArr),
+        (err, data) => {
+          if (err) throw err;
+          console.log("Note Successfully Deleted");
+          res.send(data);
+        }
+      );
+    });
+  });
 };
