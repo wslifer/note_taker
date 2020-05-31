@@ -13,4 +13,20 @@ module.exports = function (app) {
       res.send(JSON.parse(data));
     });
   });
+  app.post("/api/notes", (req, res) => {
+    fs.readFile("db/db.json", "utf8", (err, data) => {
+      if (err) {
+        throw err;
+      }
+      const noteArr = JSON.parse(data);
+      let newNote = req.body;
+      newNote.id = uuidv1();
+      noteArr.push(newNote);
+
+      fs.writeFile("db/db.json", JSON.stringify(noteArr), (err, data) => {
+        if (err) throw err;
+        res.send(data);
+      });
+    });
+  });
 };
